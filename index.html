@@ -1,0 +1,568 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
+
+:root{
+  --bg:#0E2A47;
+  --bg-deep:#0A2038;
+  --grid:rgba(111,195,214,0.09);
+  --grid-strong:rgba(111,195,214,0.16);
+  --paper:#F5F1E6;
+  --paper-dim:#EAE3D1;
+  --ink:#16233A;
+  --ink-soft:#4A5A72;
+  --amber:#E8A33D;
+  --amber-dark:#C97F1F;
+  --cyan:#6FC3D6;
+  --rule:#D8CFAE;
+  --err:#C1502E;
+}
+
+*{box-sizing:border-box;}
+
+.bp-root{
+  background:
+    repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 28px),
+    radial-gradient(circle at 15% 10%, rgba(111,195,214,0.10), transparent 45%),
+    var(--bg);
+  color:var(--paper);
+  font-family:'Space Grotesk', sans-serif;
+  padding:32px 20px 48px;
+  min-height:100%;
+  border-radius:8px;
+}
+
+.bp-wrap{max-width:1080px;margin:0 auto;}
+
+/* HEADER */
+.bp-header{margin-bottom:28px;}
+.bp-eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.18em;
+  color:var(--cyan);
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.bp-eyebrow::before{content:'';width:22px;height:1px;background:var(--cyan);display:inline-block;}
+.bp-title{
+  font-size:clamp(28px,4vw,42px);
+  font-weight:700;
+  margin:8px 0 6px;
+  letter-spacing:-0.01em;
+}
+.bp-title span{color:var(--amber);}
+.bp-sub{color:#B7C6D9;font-size:14.5px;max-width:560px;line-height:1.5;}
+
+/* RULER / PROGRESS */
+.bp-ruler{
+  display:flex;
+  margin:26px 0 34px;
+  border-top:1px solid var(--grid-strong);
+  padding-top:14px;
+  position:relative;
+  overflow-x:auto;
+}
+.bp-station{
+  flex:1;min-width:120px;
+  position:relative;
+  padding-left:14px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.06em;
+  color:#5E7793;
+  transition:color .3s;
+}
+.bp-station::before{
+  content:'';
+  position:absolute;left:0;top:-15px;
+  width:1px;height:10px;
+  background:#5E7793;
+}
+.bp-station .num{display:block;font-size:16px;font-weight:600;margin-bottom:2px;}
+.bp-station.active{color:var(--amber);}
+.bp-station.active::before{background:var(--amber);height:14px;}
+.bp-station.done{color:var(--cyan);}
+.bp-station.done::before{background:var(--cyan);}
+
+/* LAYOUT */
+.bp-grid{display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start;}
+@media(max-width:780px){.bp-grid{grid-template-columns:1fr;}}
+
+/* SHEET (main card) */
+.bp-sheet{
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:3px;
+  padding:30px 32px;
+  position:relative;
+  font-family:'Source Serif 4', serif;
+  min-height:340px;
+}
+.bp-sheet::before,.bp-sheet::after,.bp-sheet .c3,.bp-sheet .c4{
+  content:'';position:absolute;width:16px;height:16px;
+  border-color:var(--amber-dark);
+}
+.bp-sheet::before{top:8px;left:8px;border-top:2px solid;border-left:2px solid;}
+.bp-sheet::after{top:8px;right:8px;border-top:2px solid;border-right:2px solid;}
+.bp-sheet .c3{bottom:8px;left:8px;border-bottom:2px solid;border-left:2px solid;}
+.bp-sheet .c4{bottom:8px;right:8px;border-bottom:2px solid;border-right:2px solid;}
+
+.bp-step-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--amber-dark);margin-bottom:6px;
+}
+.bp-h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;margin:0 0 14px;color:var(--ink);}
+.bp-p{color:var(--ink-soft);font-size:15px;line-height:1.6;margin:0 0 18px;}
+
+.bp-field{margin-bottom:16px;}
+.bp-field label{
+  display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+  letter-spacing:.05em;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;
+}
+.bp-field input, .bp-field textarea{
+  width:100%;border:none;border-bottom:2px dashed var(--rule);
+  background:transparent;font-family:'Source Serif 4',serif;font-size:16.5px;
+  color:var(--ink);padding:6px 2px 8px;outline:none;transition:border-color .2s;
+  resize:vertical;
+}
+.bp-field input:focus, .bp-field textarea:focus{border-color:var(--amber-dark);}
+.bp-field input::placeholder, .bp-field textarea::placeholder{color:#B7AE8F;font-style:italic;}
+
+.bp-btn{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+  background:var(--amber);color:var(--ink);border:none;
+  padding:12px 22px;border-radius:2px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:transform .15s, background .15s;
+}
+.bp-btn:hover{background:var(--amber-dark);transform:translateY(-1px);}
+.bp-btn:disabled{opacity:.5;cursor:default;transform:none;}
+.bp-btn.ghost{
+  background:transparent;color:var(--ink-soft);border:1.5px solid var(--rule);
+}
+.bp-btn.ghost:hover{background:transparent;border-color:var(--ink-soft);color:var(--ink);}
+.bp-btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+
+.bp-arrow{font-family:'IBM Plex Mono',monospace;}
+
+/* OPTION LIST */
+.bp-option{
+  border:1.5px solid var(--rule);border-radius:3px;
+  padding:14px 16px;margin-bottom:10px;cursor:pointer;
+  transition:border-color .15s, background .15s;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.bp-option:hover{border-color:var(--amber-dark);}
+.bp-option.selected{border-color:var(--amber-dark);background:rgba(232,163,61,0.13);}
+.bp-option .idx{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber-dark);
+  font-weight:600;min-width:20px;padding-top:2px;
+}
+.bp-option .body b{font-family:'Space Grotesk',sans-serif;font-size:15px;display:block;margin-bottom:3px;color:var(--ink);}
+.bp-option .body span{font-size:13.5px;color:var(--ink-soft);line-height:1.5;}
+
+/* CHAPTER LIST */
+.bp-chapter{
+  display:flex;gap:14px;padding:13px 0;border-bottom:1px dashed var(--rule);
+}
+.bp-chapter:last-child{border-bottom:none;}
+.bp-chapter .num{
+  font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;
+  color:var(--cyan);background:var(--ink);border-radius:2px;
+  min-width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+}
+.bp-chapter .body b{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--ink);display:block;margin-bottom:2px;}
+.bp-chapter .body span{font-size:13.5px;color:var(--ink-soft);line-height:1.5;}
+
+/* LOADING */
+.bp-loading{display:flex;align-items:center;gap:12px;color:var(--ink-soft);font-size:14px;padding:20px 0;}
+.bp-spinner{
+  width:20px;height:20px;border-radius:50%;
+  border:2.5px solid var(--rule);border-top-color:var(--amber-dark);
+  animation:bp-spin .8s linear infinite;
+}
+@keyframes bp-spin{to{transform:rotate(360deg);}}
+
+.bp-error{
+  background:rgba(193,80,46,0.1);border:1px solid var(--err);color:var(--err);
+  padding:12px 14px;border-radius:3px;font-size:13.5px;margin-bottom:14px;
+  font-family:'IBM Plex Mono',monospace;
+}
+
+/* SIDEBAR SPEC */
+.bp-side{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--grid-strong);
+  border-radius:3px;padding:22px;
+  position:sticky;top:16px;
+}
+.bp-side-label{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.bp-side-label::before{content:'*';}
+.bp-sentence{
+  font-family:'Source Serif 4',serif;font-size:16px;line-height:1.7;color:#DCE6F0;
+}
+.bp-sentence .blank{
+  color:var(--amber);font-weight:600;border-bottom:1px solid var(--amber);
+  padding-bottom:1px;
+}
+.bp-sentence .blank.empty{
+  color:#5E7793;font-style:italic;border-bottom:1px dashed #5E7793;font-weight:400;
+}
+.bp-side hr{border:none;border-top:1px solid var(--grid-strong);margin:18px 0;}
+.bp-side-note{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7C93AC;line-height:1.6;}
+
+.bp-formula-toggle{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--cyan);
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px;margin-top:16px;display:inline-block;
+}
+.bp-formula-box{
+  margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#B7C6D9;
+  line-height:1.9;display:none;
+}
+.bp-formula-box.open{display:block;}
+.bp-formula-box .step{color:var(--amber);}
+
+.bp-footer{
+  margin-top:30px;text-align:center;color:#5E7793;font-size:11.5px;
+  font-family:'IBM Plex Mono',monospace;
+}
+</style>
+
+<div class="bp-root">
+  <div class="bp-wrap">
+    <div class="bp-header">
+      <div class="bp-eyebrow">Ebook Blueprint Generator</div>
+      <h1 class="bp-title">Buuin ang iyong <span>Clarity Sentence</span></h1>
+      <p class="bp-sub">Apat na hakbang mula sa isang pangungusap patungo sa kumpletong balangkas ng eBook - sino ang tinutulungan mo, anong problema, anong solusyon, at ang buong outline.</p>
+    </div>
+
+    <div class="bp-ruler" id="bp-ruler"></div>
+
+    <div class="bp-grid">
+      <div class="bp-sheet" id="bp-sheet">
+        <div class="c3"></div><div class="c4"></div>
+      </div>
+
+      <div class="bp-side">
+        <div class="bp-side-label">Blueprint Spec</div>
+        <div class="bp-sentence" id="bp-sentence"></div>
+        <hr/>
+        <div class="bp-side-note" id="bp-side-note">Punan muna ang target audience sa kaliwa para simulan.</div>
+        <span class="bp-formula-toggle" id="bp-formula-toggle">Tingnan ang 10/10 Formula v</span>
+        <div class="bp-formula-box" id="bp-formula-box">
+          <span class="step">Problem</span> -> Explanation -> <span class="step">Framework</span> -> Step-by-Step Guide -> Real Example -> Checklist -> Action Plan -> <span class="step">Transformation</span><br/><br/>
+          Ang pinakamahalagang sukatan: hindi kung gaano karaming impormasyon, kundi kung gaano kalaki ang resulta ng mambabasa.
+        </div>
+      </div>
+    </div>
+
+    <div class="bp-footer">EBOOK BLUEPRINT - SHEET 01 OF 04 - GENERATED WITH CLAUDE</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const state = {
+    step: 1,
+    sino: '',
+    problemsList: null,
+    chosenProblemIdx: null,
+    conceptsList: null,
+    chosenConceptIdx: null,
+    chaptersList: null,
+    loading: false,
+    error: null
+  };
+
+  const stations = ['SENTENCE','PROBLEMA','SOLUSYON','OUTLINE'];
+
+  function esc(s){
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : s;
+    return d.innerHTML;
+  }
+
+  // PALITAN ito ng URL ng Cloudflare Worker mo pagkatapos i-deploy
+  // (hal. "https://ebook-blueprint-proxy.YOUR-SUBDOMAIN.workers.dev")
+  const WORKER_URL = "https://ebook-blueprint-proxy.YOUR-SUBDOMAIN.workers.dev";
+
+  async function callClaude(userPrompt, jsonInstruction){
+    if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
+      throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
+    }
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [
+          { role: "user", content: userPrompt + "\n\n" + jsonInstruction + "\n\nSagutin sa wikang Filipino/Taglish. Ibalik LAMANG ang JSON object, walang paunang salita, walang markdown backticks, walang paliwanag." }
+        ]
+      })
+    });
+    if(!res.ok){ throw new Error("API error " + res.status); }
+    const data = await res.json();
+    const text = (data.content || []).map(b => b.text || "").join("\n").trim();
+    const clean = text.replace(/```json|```/g, "").trim();
+    return JSON.parse(clean);
+  }
+
+  function renderRuler(){
+    const el = document.getElementById('bp-ruler');
+    el.innerHTML = stations.map((s,i)=>{
+      const n = i+1;
+      let cls = '';
+      if(n === state.step) cls = 'active';
+      else if(n < state.step) cls = 'done';
+      return `<div class="bp-station ${cls}"><span class="num">0${n}</span>${s}</div>`;
+    }).join('');
+  }
+
+  function renderSentence(){
+    const sinoTxt = state.sino ? `<span class="blank">${esc(state.sino)}</span>` : `<span class="blank empty">[sino]</span>`;
+    const probTxt = state.problemsList && state.chosenProblemIdx !== null
+      ? `<span class="blank">${esc(state.problemsList[state.chosenProblemIdx].title)}</span>`
+      : `<span class="blank empty">[problema]</span>`;
+    const solTxt = state.conceptsList && state.chosenConceptIdx !== null
+      ? `<span class="blank">${esc(state.conceptsList[state.chosenConceptIdx].title)}</span>`
+      : `<span class="blank empty">[solusyon]</span>`;
+    document.getElementById('bp-sentence').innerHTML =
+      `I help ${sinoTxt}<br/>struggling with ${probTxt}<br/>through ${solTxt}`;
+
+    const note = document.getElementById('bp-side-note');
+    if(state.step === 1) note.textContent = 'Punan muna ang target audience sa kaliwa para simulan.';
+    else if(state.step === 2) note.textContent = 'Pumili ng isang problema mula sa listahan.';
+    else if(state.step === 3) note.textContent = 'Pumili ng isang unique concept bilang solusyon.';
+    else note.textContent = 'Handa na ang outline ng iyong eBook.';
+  }
+
+  function loadingHtml(msg){
+    return `<div class="bp-loading"><div class="bp-spinner"></div>${esc(msg)}</div>`;
+  }
+
+  function errorHtml(){
+    return state.error ? `<div class="bp-error">[!] ${esc(state.error)} - subukan muli.</div>` : '';
+  }
+
+  function renderStep1(){
+    const sheet = document.getElementById('bp-sheet');
+    sheet.innerHTML = `
+      <div class="c3"></div><div class="c4"></div>
+      <div class="bp-step-label">Hakbang 01 - Clarity Sentence</div>
+      <h2 class="bp-h2">Sino ang tutulungan mo?</h2>
+      <p class="bp-p">Ilarawan ang iyong target audience nang malinaw hangga't maaari - mas espesipiko, mas madaling hanapin ang tunay nilang problema.</p>
+      ${errorHtml()}
+      <div class="bp-field">
+        <label>Target Audience [sino]</label>
+        <input id="in-sino" type="text" placeholder="hal. mga bagong freelancer sa Pilipinas na nag-uumpisa online" value="${esc(state.sino)}"/>
+      </div>
+      ${state.loading ? loadingHtml('Hinahanap ang top 10 problema...') : `
+      <div class="bp-btn-row">
+        <button class="bp-btn" id="btn-find-problems">Hanapin ang Top 10 Problema <span class="bp-arrow">-></span></button>
+      </div>`}
+    `;
+    document.getElementById('in-sino').addEventListener('input', e => { state.sino = e.target.value; renderSentence(); });
+    if(!state.loading){
+      document.getElementById('btn-find-problems').addEventListener('click', onFindProblems);
+    }
+  }
+
+  async function onFindProblems(){
+    if(!state.sino.trim()){ state.error = 'Kailangan mo munang ilagay ang target audience'; renderStep1(); return; }
+    state.error = null; state.loading = true; renderStep1();
+    try{
+      const prompt = `I'd like to create an e-book that helps ${state.sino}. Help me find the biggest and most urgent problem that this market has, and with the highest demand for solutions. Provide a list of the top 10 specific and detailed problems and frustrations they face. Arrange in order of urgency and demand for a solution.`;
+      const jsonInstr = `Ibalik bilang JSON object na may ganitong hugis: {"problems":[{"title":"maikling pamagat, max 8 salita","description":"1 pangungusap na paliwanag, max 22 salita"}]} - eksaktong 10 items, nakaayos mula pinaka-urgent papuntang pinaka-hindi.`;
+      const data = await callClaude(prompt, jsonInstr);
+      state.problemsList = data.problems.slice(0,10);
+      state.loading = false;
+      state.step = 2;
+      render();
+    }catch(err){
+      state.loading = false;
+      state.error = 'May problema sa paghingi ng datos';
+      renderStep1();
+    }
+  }
+
+  function renderStep2(){
+    const sheet = document.getElementById('bp-sheet');
+    if(!state.problemsList){ state.step = 1; render(); return; }
+    let optionsHtml = state.problemsList.map((p,i)=>`
+      <div class="bp-option ${state.chosenProblemIdx===i?'selected':''}" data-idx="${i}">
+        <div class="idx">0${i+1}</div>
+        <div class="body"><b>${esc(p.title)}</b><span>${esc(p.description)}</span></div>
+      </div>
+    `).join('');
+    sheet.innerHTML = `
+      <div class="c3"></div><div class="c4"></div>
+      <div class="bp-step-label">Hakbang 02 - Problema</div>
+      <h2 class="bp-h2">Piliin ang pinaka-urgent na problema</h2>
+      <p class="bp-p">Ito ang magiging pundasyon ng iyong eBook. Pumili ng isa mula sa listahan sa ibaba.</p>
+      ${errorHtml()}
+      <div id="options-wrap">${optionsHtml}</div>
+      ${state.loading ? loadingHtml('Bumubuo ng 5 unique concepts...') : `
+      <div class="bp-btn-row">
+        <button class="bp-btn ghost" id="btn-back-1"><- Bumalik</button>
+        <button class="bp-btn" id="btn-to-step3" ${state.chosenProblemIdx===null?'disabled':''}>Bumuo ng Unique Concepts <span class="bp-arrow">-></span></button>
+      </div>`}
+    `;
+    sheet.querySelectorAll('.bp-option').forEach(opt=>{
+      opt.addEventListener('click', ()=>{
+        state.chosenProblemIdx = parseInt(opt.dataset.idx,10);
+        state.conceptsList = null; state.chosenConceptIdx = null; state.chaptersList = null;
+        renderSentence();
+        renderStep2();
+      });
+    });
+    if(!state.loading){
+      document.getElementById('btn-back-1').addEventListener('click', ()=>{ state.step=1; render(); });
+      document.getElementById('btn-to-step3').addEventListener('click', onFindConcepts);
+    }
+  }
+
+  async function onFindConcepts(){
+    if(state.chosenProblemIdx === null) return;
+    state.error = null; state.loading = true; renderStep2();
+    try{
+      const chosen = state.problemsList[state.chosenProblemIdx];
+      const prompt = `OK. I'd like to write an e-book based on this problem: "${chosen.title} - ${chosen.description}". Give me 5 unique core concepts as a solution. The objective is to make this e-book different, attractive, and stand out over its competitors.`;
+      const jsonInstr = `Ibalik bilang JSON object: {"concepts":[{"title":"maikling pamagat ng konsepto, max 7 salita","description":"1 pangungusap kung bakit ito unique, max 22 salita"}]} - eksaktong 5 items.`;
+      const data = await callClaude(prompt, jsonInstr);
+      state.conceptsList = data.concepts.slice(0,5);
+      state.loading = false;
+      state.step = 3;
+      render();
+    }catch(err){
+      state.loading = false;
+      state.error = 'May problema sa paghingi ng datos';
+      renderStep2();
+    }
+  }
+
+  function renderStep3(){
+    const sheet = document.getElementById('bp-sheet');
+    if(!state.conceptsList){ state.step = 2; render(); return; }
+    let optionsHtml = state.conceptsList.map((c,i)=>`
+      <div class="bp-option ${state.chosenConceptIdx===i?'selected':''}" data-idx="${i}">
+        <div class="idx">0${i+1}</div>
+        <div class="body"><b>${esc(c.title)}</b><span>${esc(c.description)}</span></div>
+      </div>
+    `).join('');
+    sheet.innerHTML = `
+      <div class="c3"></div><div class="c4"></div>
+      <div class="bp-step-label">Hakbang 03 - Solusyon</div>
+      <h2 class="bp-h2">Piliin ang natatanging framework</h2>
+      <p class="bp-p">Ito ang magiging sariling sistema o methodology ng iyong eBook - ang dahilan kung bakit ito magiging kakaiba.</p>
+      ${errorHtml()}
+      <div id="options-wrap">${optionsHtml}</div>
+      ${state.loading ? loadingHtml('Bumubuo ng 10-chapter outline...') : `
+      <div class="bp-btn-row">
+        <button class="bp-btn ghost" id="btn-back-2"><- Bumalik</button>
+        <button class="bp-btn" id="btn-to-step4" ${state.chosenConceptIdx===null?'disabled':''}>Bumuo ng Outline <span class="bp-arrow">-></span></button>
+      </div>`}
+    `;
+    sheet.querySelectorAll('.bp-option').forEach(opt=>{
+      opt.addEventListener('click', ()=>{
+        state.chosenConceptIdx = parseInt(opt.dataset.idx,10);
+        state.chaptersList = null;
+        renderSentence();
+        renderStep3();
+      });
+    });
+    if(!state.loading){
+      document.getElementById('btn-back-2').addEventListener('click', ()=>{ state.step=2; render(); });
+      document.getElementById('btn-to-step4').addEventListener('click', onFindOutline);
+    }
+  }
+
+  async function onFindOutline(){
+    if(state.chosenConceptIdx === null) return;
+    state.error = null; state.loading = true; renderStep3();
+    try{
+      const prob = state.problemsList[state.chosenProblemIdx];
+      const concept = state.conceptsList[state.chosenConceptIdx];
+      const clarity = `I help ${state.sino} struggling with ${prob.title} through ${concept.title}`;
+      const prompt = `Give me an outline with a maximum of 10 chapters for an e-book based on this: ${clarity}. Context: ang problema ay "${prob.description}" at ang framework/solusyon ay "${concept.description}".`;
+      const jsonInstr = `Ibalik bilang JSON object: {"chapters":[{"number":1,"title":"pamagat ng kabanata, max 8 salita","focus":"1 pangungusap na naglalarawan sa laman/aksyon ng kabanata, max 22 salita"}]} - hanggang 10 items, sundin ang daloy na Problem -> Explanation -> Framework -> Step-by-Step -> Example -> Checklist -> Action Plan -> Transformation.`;
+      const data = await callClaude(prompt, jsonInstr);
+      state.chaptersList = data.chapters.slice(0,10);
+      state.loading = false;
+      state.step = 4;
+      render();
+    }catch(err){
+      state.loading = false;
+      state.error = 'May problema sa paghingi ng datos';
+      renderStep3();
+    }
+  }
+
+  function renderStep4(){
+    const sheet = document.getElementById('bp-sheet');
+    if(!state.chaptersList){ state.step = 3; render(); return; }
+    const chaptersHtml = state.chaptersList.map(c=>`
+      <div class="bp-chapter">
+        <div class="num">${c.number}</div>
+        <div class="body"><b>${esc(c.title)}</b><span>${esc(c.focus)}</span></div>
+      </div>
+    `).join('');
+    sheet.innerHTML = `
+      <div class="c3"></div><div class="c4"></div>
+      <div class="bp-step-label">Hakbang 04 - Outline</div>
+      <h2 class="bp-h2">Handa na ang blueprint ng iyong eBook</h2>
+      <p class="bp-p">Ito ang buong outline batay sa iyong clarity sentence. Puwede mo pang i-regenerate ang bawat hakbang kung gusto ng ibang direksyon.</p>
+      <div id="chapters-wrap">${chaptersHtml}</div>
+      <div class="bp-btn-row">
+        <button class="bp-btn ghost" id="btn-back-3"><- Bumalik</button>
+        <button class="bp-btn ghost" id="btn-copy">Kopyahin ang Buod</button>
+        <button class="bp-btn" id="btn-restart">Simulan Muli</button>
+      </div>
+    `;
+    document.getElementById('btn-back-3').addEventListener('click', ()=>{ state.step=3; render(); });
+    document.getElementById('btn-restart').addEventListener('click', ()=>{
+      Object.assign(state, { step:1, sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, loading:false, error:null });
+      render();
+    });
+    document.getElementById('btn-copy').addEventListener('click', ()=>{
+      const prob = state.problemsList[state.chosenProblemIdx];
+      const concept = state.conceptsList[state.chosenConceptIdx];
+      let out = `CLARITY SENTENCE:\nI help ${state.sino} struggling with ${prob.title} through ${concept.title}\n\n`;
+      out += `PROBLEMA: ${prob.title} - ${prob.description}\n`;
+      out += `SOLUSYON/FRAMEWORK: ${concept.title} - ${concept.description}\n\n`;
+      out += `OUTLINE:\n`;
+      state.chaptersList.forEach(c=>{ out += `${c.number}. ${c.title} - ${c.focus}\n`; });
+      navigator.clipboard.writeText(out).then(()=>{
+        const btn = document.getElementById('btn-copy');
+        const old = btn.textContent;
+        btn.textContent = 'Nakopya [OK]';
+        setTimeout(()=>{ btn.textContent = old; }, 1600);
+      });
+    });
+  }
+
+  function render(){
+    renderRuler();
+    renderSentence();
+    if(state.step === 1) renderStep1();
+    else if(state.step === 2) renderStep2();
+    else if(state.step === 3) renderStep3();
+    else renderStep4();
+  }
+
+  document.getElementById('bp-formula-toggle').addEventListener('click', ()=>{
+    const box = document.getElementById('bp-formula-box');
+    const t = document.getElementById('bp-formula-toggle');
+    box.classList.toggle('open');
+    t.textContent = box.classList.contains('open') ? 'Itago ang Formula ^' : 'Tingnan ang 10/10 Formula v';
+  });
+
+  render();
+})();
+</script>
