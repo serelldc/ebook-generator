@@ -485,20 +485,22 @@
     return JSON.parse(clean);
   }
 
-  async function callClaudeRaw(userPrompt, maxTokens){
+  async function callClaudeRaw(userPrompt, maxTokens, asJson){
     if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
       throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
     }
+    const generationConfig = {
+      maxOutputTokens: maxTokens || 8000,
+      thinkingConfig: { thinkingLevel: "low" }
+    };
+    if(asJson) generationConfig.responseMimeType = "application/json";
     const res = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: GEMINI_MODEL,
         contents: [ { parts: [ { text: userPrompt } ] } ],
-        generationConfig: {
-          maxOutputTokens: maxTokens || 8000,
-          thinkingConfig: { thinkingLevel: "low" }
-        }
+        generationConfig
       })
     });
     if(!res.ok){ throw new Error("API error " + res.status); }
@@ -1066,7 +1068,7 @@ Return ONLY a JSON object, no markdown, no commentary, shaped like:
 Return exactly 3 items: one that closely matches the requested style, and two alternate creative variations that still fit the book's theme and audience.`;
 
     try{
-      const text = await callClaudeRaw(prompt, 2500);
+      const text = await callClaudeRaw(prompt, 4000, true);
       const clean = text.replace(/```json|```/g, "").trim();
       const data = JSON.parse(clean);
       cov.prompts = (data.prompts || []).slice(0,3);
