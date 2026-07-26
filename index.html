@@ -388,7 +388,7 @@
       </div>
     </div>
 
-    <div class="bp-footer">EBOOK BLUEPRINT - SHEET 01 OF 04 - GENERATED WITH CLAUDE</div>
+    <div class="bp-footer">EBOOK BLUEPRINT - SHEET 01 OF 04 - GENERATED WITH GEMINI</div>
   </div>
   <div id="modal-root"></div>
 </div>
@@ -450,24 +450,33 @@
   // (hal. "https://clarity-engine-proxy.serellydc.workers.dev")
   const WORKER_URL = "https://clarity-engine-proxy.serellydc.workers.dev";
 
+  // Ginagamit ang Google Gemini API (sa likod ng Cloudflare Worker) dahil
+  // may free tier ito na walang kailangang billing/credit card.
+  const GEMINI_MODEL = "gemini-3.5-flash";
+
+  function extractGeminiText(data){
+    const candidate = (data.candidates && data.candidates[0]) || {};
+    const parts = (candidate.content && candidate.content.parts) || [];
+    return parts.map(p => p.text || "").join("\n").trim();
+  }
+
   async function callClaude(userPrompt, jsonInstruction){
     if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
       throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
     }
+    const fullPrompt = userPrompt + "\n\n" + jsonInstruction + "\n\nSagutin sa wikang Filipino/Taglish. Ibalik LAMANG ang JSON object, walang paunang salita, walang markdown backticks, walang paliwanag.";
     const res = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-5",
-        max_tokens: 1000,
-        messages: [
-          { role: "user", content: userPrompt + "\n\n" + jsonInstruction + "\n\nSagutin sa wikang Filipino/Taglish. Ibalik LAMANG ang JSON object, walang paunang salita, walang markdown backticks, walang paliwanag." }
-        ]
+        model: GEMINI_MODEL,
+        contents: [ { parts: [ { text: fullPrompt } ] } ],
+        generationConfig: { maxOutputTokens: 1500, responseMimeType: "application/json" }
       })
     });
     if(!res.ok){ throw new Error("API error " + res.status); }
     const data = await res.json();
-    const text = (data.content || []).map(b => b.text || "").join("\n").trim();
+    const text = extractGeminiText(data);
     const clean = text.replace(/```json|```/g, "").trim();
     return JSON.parse(clean);
   }
@@ -480,14 +489,14 @@
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-5",
-        max_tokens: maxTokens || 6000,
-        messages: [ { role: "user", content: userPrompt } ]
+        model: GEMINI_MODEL,
+        contents: [ { parts: [ { text: userPrompt } ] } ],
+        generationConfig: { maxOutputTokens: maxTokens || 6000 }
       })
     });
     if(!res.ok){ throw new Error("API error " + res.status); }
     const data = await res.json();
-    return (data.content || []).map(b => b.text || "").join("\n").trim();
+    return extractGeminiText(data);
   }
 
   function renderRuler(){
