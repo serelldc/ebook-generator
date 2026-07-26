@@ -460,6 +460,15 @@
     return parts.map(p => p.text || "").join("\n").trim();
   }
 
+  // Ibinabalik ang mas malinaw na mensahe kapag rate-limited (429) kesa sa
+  // generic na "may problema". Ginagamit ito sa lahat ng catch block.
+  function friendlyErrorMsg(err){
+    if(err && err.status === 429){
+      return 'Marami munang gumagamit ngayon (rate limit). Sandaling maghintay ng 1-2 minuto bago subukan muli';
+    }
+    return 'May problema sa paghingi ng datos';
+  }
+
   async function callClaude(userPrompt, jsonInstruction){
     if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
       throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
@@ -478,7 +487,7 @@
         }
       })
     });
-    if(!res.ok){ throw new Error("API error " + res.status); }
+    if(!res.ok){ const e = new Error("API error " + res.status); e.status = res.status; throw e; }
     const data = await res.json();
     const text = extractGeminiText(data);
     const clean = text.replace(/```json|```/g, "").trim();
@@ -503,7 +512,7 @@
         generationConfig
       })
     });
-    if(!res.ok){ throw new Error("API error " + res.status); }
+    if(!res.ok){ const e = new Error("API error " + res.status); e.status = res.status; throw e; }
     const data = await res.json();
     return extractGeminiText(data);
   }
@@ -581,7 +590,7 @@
       render();
     }catch(err){
       state.loading = false;
-      state.error = 'May problema sa paghingi ng datos';
+      state.error = friendlyErrorMsg(err);
       renderStep1();
     }
   }
@@ -636,7 +645,7 @@
       render();
     }catch(err){
       state.loading = false;
-      state.error = 'May problema sa paghingi ng datos';
+      state.error = friendlyErrorMsg(err);
       renderStep2();
     }
   }
@@ -693,7 +702,7 @@
       render();
     }catch(err){
       state.loading = false;
-      state.error = 'May problema sa paghingi ng datos';
+      state.error = friendlyErrorMsg(err);
       renderStep3();
     }
   }
@@ -944,7 +953,7 @@ Mahalagang panuto: plain text lang, walang markdown symbols tulad ng ** o ## o #
     }catch(err){
       const body = document.getElementById('modal-body');
       if(body){
-        body.innerHTML = `<div class="bp-error">[!] May problema sa paghingi ng datos - subukan muli.</div>`;
+        body.innerHTML = `<div class="bp-error">[!] ${esc(friendlyErrorMsg(err))} - subukan muli.</div>`;
         document.querySelector('.bp-modal-btnrow').innerHTML = `<button class="bp-btn" id="modal-retry">Subukan Muli</button>`;
         document.getElementById('modal-retry').addEventListener('click', ()=> generateFullChapter(idx));
       }
@@ -1076,7 +1085,7 @@ Return exactly 3 items: one that closely matches the requested style, and two al
       renderCoverModal();
     }catch(err){
       cov.loading = false;
-      cov.error = 'May problema sa paghingi ng datos';
+      cov.error = friendlyErrorMsg(err);
       renderCoverModal();
     }
   }
