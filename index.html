@@ -471,7 +471,11 @@
       body: JSON.stringify({
         model: GEMINI_MODEL,
         contents: [ { parts: [ { text: fullPrompt } ] } ],
-        generationConfig: { maxOutputTokens: 1500, responseMimeType: "application/json" }
+        generationConfig: {
+          maxOutputTokens: 3000,
+          responseMimeType: "application/json",
+          thinkingConfig: { thinkingLevel: "low" }
+        }
       })
     });
     if(!res.ok){ throw new Error("API error " + res.status); }
@@ -491,7 +495,10 @@
       body: JSON.stringify({
         model: GEMINI_MODEL,
         contents: [ { parts: [ { text: userPrompt } ] } ],
-        generationConfig: { maxOutputTokens: maxTokens || 6000 }
+        generationConfig: {
+          maxOutputTokens: maxTokens || 8000,
+          thinkingConfig: { thinkingLevel: "low" }
+        }
       })
     });
     if(!res.ok){ throw new Error("API error " + res.status); }
@@ -921,7 +928,7 @@ After this chapter, you learned:
 Mahalagang panuto: plain text lang, walang markdown symbols tulad ng ** o ## o #. Panatilihin ang mga numbered section labels na nakasulat sa itaas (1. CHAPTER OPENING, 2. THE PROBLEM, atbp) nang eksakto, dahil ico-copy-paste ito diretso sa Canva.`;
 
     try{
-      const text = await callClaudeRaw(prompt, 6000);
+      const text = await callClaudeRaw(prompt, 8000);
       state.chapterContentCache[idx] = text;
       const body = document.getElementById('modal-body');
       if(body){
@@ -1059,7 +1066,7 @@ Return ONLY a JSON object, no markdown, no commentary, shaped like:
 Return exactly 3 items: one that closely matches the requested style, and two alternate creative variations that still fit the book's theme and audience.`;
 
     try{
-      const text = await callClaudeRaw(prompt, 1200);
+      const text = await callClaudeRaw(prompt, 2500);
       const clean = text.replace(/```json|```/g, "").trim();
       const data = JSON.parse(clean);
       cov.prompts = (data.prompts || []).slice(0,3);
