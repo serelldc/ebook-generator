@@ -39,9 +39,12 @@ export default {
     }
 
     // Simpleng safety cap para hindi maabuso ang key mo kung may
-    // makahanap ng URL ng worker mo.
-    if (body.max_tokens && body.max_tokens > 2000) {
-      body.max_tokens = 2000;
+    // makahanap ng URL ng worker mo. Itinaas mula 2000 -> 8000 dahil
+    // ang buong-chapter generation (9 sections, 5-10 pages) ay
+    // nangangailangan ng mas malaking output budget kaysa dati,
+    // kaya hindi na napuputol/na-truncate ang mga chapter.
+    if (body.max_tokens && body.max_tokens > 8000) {
+      body.max_tokens = 8000;
     }
 
     try {
