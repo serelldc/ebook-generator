@@ -1,3 +1,4 @@
+cat > index.html << 'INDEXEOF'
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
 
@@ -165,9 +166,15 @@
 
 /* CHAPTER LIST */
 .bp-chapter{
-  display:flex;gap:14px;padding:13px 0;border-bottom:1px dashed var(--rule);
+  display:flex;gap:14px;padding:13px 4px;border-bottom:1px dashed var(--rule);
+  cursor:pointer;border-radius:3px;transition:background .15s;
 }
-.bp-chapter:last-child{border-bottom:none;}
+.bp-chapter:hover{background:rgba(232,163,61,0.10);}
+.bp-chapter .arrow-hint{
+  margin-left:auto;align-self:center;font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--amber-dark);opacity:0;transition:opacity .15s;white-space:nowrap;
+}
+.bp-chapter:hover .arrow-hint{opacity:1;}
 .bp-chapter .num{
   font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;
   color:var(--cyan);background:var(--ink);border-radius:2px;
@@ -232,6 +239,89 @@
   margin-top:30px;text-align:center;color:#5E7793;font-size:11.5px;
   font-family:'IBM Plex Mono',monospace;
 }
+
+/* BOOK PREVIEW */
+.bp-book-eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--amber-dark);text-align:center;margin-bottom:14px;
+}
+.bp-book-cover{
+  text-align:center;padding:6px 10px 30px;border-bottom:2px solid var(--ink);margin-bottom:26px;
+}
+.bp-book-title{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;
+  font-size:clamp(26px,4vw,38px);color:var(--ink);line-height:1.15;margin:0 0 14px;
+}
+.bp-book-sub{
+  font-family:'Source Serif 4',serif;font-style:italic;font-size:16px;
+  color:var(--ink-soft);max-width:520px;margin:0 auto;line-height:1.6;
+}
+.bp-book-meta{
+  margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  color:var(--amber-dark);letter-spacing:.06em;
+}
+.bp-toc-label{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-soft);margin-bottom:16px;
+}
+.bp-toc-item{
+  display:flex;gap:16px;align-items:baseline;padding:12px 0;
+  border-bottom:1px dotted var(--rule);
+}
+.bp-toc-item .toc-num{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;
+  color:var(--amber-dark);min-width:22px;
+}
+.bp-toc-item .toc-title{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15.5px;color:var(--ink);
+  flex:1;
+}
+.bp-toc-item .toc-dots{
+  flex:1;border-bottom:1px dotted var(--rule);margin:0 4px 4px;min-width:20px;
+}
+.bp-book-note{
+  margin-top:26px;padding:16px 18px;background:rgba(232,163,61,0.10);
+  border-left:3px solid var(--amber-dark);font-family:'Source Serif 4',serif;
+  font-size:13.5px;color:var(--ink-soft);line-height:1.6;
+}
+@media print{
+  .print-hide{display:none !important;}
+  .bp-root{background:#fff !important;padding:0 !important;}
+  .bp-sheet{box-shadow:none !important;border:none !important;}
+}
+
+/* CHAPTER MODAL */
+.bp-modal-backdrop{
+  position:fixed;inset:0;background:rgba(10,32,56,0.86);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:40px 20px;overflow-y:auto;z-index:1000;
+}
+.bp-modal{
+  background:var(--paper);color:var(--ink);width:100%;max-width:720px;
+  border-radius:4px;padding:34px 36px;position:relative;
+  font-family:'Source Serif 4',serif;
+}
+.bp-modal-close{
+  position:absolute;top:16px;right:16px;
+  background:transparent;border:1.5px solid var(--rule);border-radius:2px;
+  width:30px;height:30px;font-size:16px;color:var(--ink-soft);cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+}
+.bp-modal-close:hover{border-color:var(--ink-soft);color:var(--ink);}
+.bp-modal-eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--amber-dark);margin-bottom:8px;
+}
+.bp-modal-title{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
+  color:var(--ink);margin:0 0 20px;padding-right:36px;
+}
+.bp-chapter-content{
+  white-space:pre-wrap;font-size:14.5px;line-height:1.75;color:var(--ink);
+  max-height:52vh;overflow-y:auto;padding-right:6px;
+}
+.bp-chapter-content b{font-family:'Space Grotesk',sans-serif;color:var(--amber-dark);}
+.bp-modal-btnrow{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
 </style>
 
 <div class="bp-root">
@@ -264,18 +354,21 @@
 
     <div class="bp-footer">EBOOK BLUEPRINT - SHEET 01 OF 04 - GENERATED WITH CLAUDE</div>
   </div>
+  <div id="modal-root"></div>
 </div>
 
 <script>
 (function(){
   const state = {
     step: 1,
+    view: 'wizard',
     sino: '',
     problemsList: null,
     chosenProblemIdx: null,
     conceptsList: null,
     chosenConceptIdx: null,
     chaptersList: null,
+    chapterContentCache: {},
     loading: false,
     error: null
   };
@@ -312,6 +405,24 @@
     const text = (data.content || []).map(b => b.text || "").join("\n").trim();
     const clean = text.replace(/```json|```/g, "").trim();
     return JSON.parse(clean);
+  }
+
+  async function callClaudeRaw(userPrompt){
+    if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
+      throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
+    }
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 4500,
+        messages: [ { role: "user", content: userPrompt } ]
+      })
+    });
+    if(!res.ok){ throw new Error("API error " + res.status); }
+    const data = await res.json();
+    return (data.content || []).map(b => b.text || "").join("\n").trim();
   }
 
   function renderRuler(){
@@ -507,10 +618,11 @@
   function renderStep4(){
     const sheet = document.getElementById('bp-sheet');
     if(!state.chaptersList){ state.step = 3; render(); return; }
-    const chaptersHtml = state.chaptersList.map(c=>`
-      <div class="bp-chapter">
+    const chaptersHtml = state.chaptersList.map((c,i)=>`
+      <div class="bp-chapter" data-cidx="${i}">
         <div class="num">${c.number}</div>
         <div class="body"><b>${esc(c.title)}</b><span>${esc(c.focus)}</span></div>
+        <div class="arrow-hint">Buksan ang buong chapter -></div>
       </div>
     `).join('');
     sheet.innerHTML = `
@@ -522,12 +634,20 @@
       <div class="bp-btn-row">
         <button class="bp-btn ghost" id="btn-back-3"><- Bumalik</button>
         <button class="bp-btn ghost" id="btn-copy">Kopyahin ang Buod</button>
-        <button class="bp-btn" id="btn-restart">Simulan Muli</button>
+        <button class="bp-btn" id="btn-preview">Tingnan ang Buong Aklat -></button>
+        <button class="bp-btn ghost" id="btn-restart">Simulan Muli</button>
       </div>
     `;
+    document.getElementById('btn-preview').addEventListener('click', ()=>{ state.view='preview'; render(); });
     document.getElementById('btn-back-3').addEventListener('click', ()=>{ state.step=3; render(); });
+    sheet.querySelectorAll('.bp-chapter').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const idx = parseInt(el.dataset.cidx, 10);
+        openChapterModal(idx);
+      });
+    });
     document.getElementById('btn-restart').addEventListener('click', ()=>{
-      Object.assign(state, { step:1, sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, loading:false, error:null });
+      Object.assign(state, { step:1, sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, chapterContentCache:{}, loading:false, error:null });
       render();
     });
     document.getElementById('btn-copy').addEventListener('click', ()=>{
@@ -547,9 +667,207 @@
     });
   }
 
+  function renderBookPreview(){
+    const sheet = document.getElementById('bp-sheet');
+    if(!state.chaptersList){ state.view='wizard'; state.step=3; render(); return; }
+    const prob = state.problemsList[state.chosenProblemIdx];
+    const concept = state.conceptsList[state.chosenConceptIdx];
+    const chapterCount = state.chaptersList.length;
+
+    const tocHtml = state.chaptersList.map(c=>`
+      <div class="bp-toc-item">
+        <div class="toc-num">${String(c.number).padStart(2,'0')}</div>
+        <div class="toc-title">${esc(c.title)}</div>
+      </div>
+    `).join('');
+
+    sheet.innerHTML = `
+      <div class="c3"></div><div class="c4"></div>
+      <div class="bp-step-label print-hide">Kumpletong Aklat - Preview</div>
+
+      <div class="bp-book-cover">
+        <div class="bp-book-eyebrow">eBook Blueprint - Kumpletong Balangkas</div>
+        <h1 class="bp-book-title">${esc(concept.title)}</h1>
+        <p class="bp-book-sub">Isang gabay para kay ${esc(state.sino)}, mula sa problemang "${esc(prob.title)}" patungo sa malinaw na resulta.</p>
+        <div class="bp-book-meta">${chapterCount} KABANATA &middot; BATAY SA CLARITY SENTENCE FRAMEWORK</div>
+      </div>
+
+      <div class="bp-toc-label">Talaan ng mga Nilalaman</div>
+      <div id="toc-wrap">${tocHtml}</div>
+
+      <div class="bp-book-note">
+        <b>Problema:</b> ${esc(prob.description)}<br/><br/>
+        <b>Solusyon/Framework:</b> ${esc(concept.description)}
+      </div>
+
+      <div class="bp-btn-row print-hide">
+        <button class="bp-btn ghost" id="btn-back-outline"><- Bumalik sa Outline</button>
+        <button class="bp-btn ghost" id="btn-print">I-print / I-save bilang PDF</button>
+        <button class="bp-btn ghost" id="btn-copy-book">Kopyahin ang Buod</button>
+        <button class="bp-btn" id="btn-restart-book">Simulan Muli</button>
+      </div>
+    `;
+
+    document.getElementById('btn-back-outline').addEventListener('click', ()=>{ state.view='wizard'; render(); });
+    document.getElementById('btn-print').addEventListener('click', ()=>{ window.print(); });
+    document.getElementById('btn-restart-book').addEventListener('click', ()=>{
+      Object.assign(state, { step:1, view:'wizard', sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, chapterContentCache:{}, loading:false, error:null });
+      render();
+    });
+    document.getElementById('btn-copy-book').addEventListener('click', ()=>{
+      let out = `${concept.title}\n\nIsang gabay para kay ${state.sino}\n\n`;
+      out += `PROBLEMA: ${prob.title} - ${prob.description}\n`;
+      out += `SOLUSYON/FRAMEWORK: ${concept.title} - ${concept.description}\n\n`;
+      out += `TALAAN NG MGA NILALAMAN:\n`;
+      state.chaptersList.forEach(c=>{ out += `${c.number}. ${c.title}\n   ${c.focus}\n`; });
+      navigator.clipboard.writeText(out).then(()=>{
+        const btn = document.getElementById('btn-copy-book');
+        const old = btn.textContent;
+        btn.textContent = 'Nakopya [OK]';
+        setTimeout(()=>{ btn.textContent = old; }, 1600);
+      });
+    });
+  }
+
+  function closeChapterModal(){
+    document.getElementById('modal-root').innerHTML = '';
+  }
+
+  function openChapterModal(idx){
+    const c = state.chaptersList[idx];
+    const modalRoot = document.getElementById('modal-root');
+    const cached = state.chapterContentCache[idx];
+
+    modalRoot.innerHTML = `
+      <div class="bp-modal-backdrop" id="modal-backdrop">
+        <div class="bp-modal">
+          <button class="bp-modal-close" id="modal-close">x</button>
+          <div class="bp-modal-eyebrow">Kabanata ${c.number}</div>
+          <h3 class="bp-modal-title">${esc(c.title)}</h3>
+          <div id="modal-body">
+            ${cached ? `<div class="bp-chapter-content" id="modal-content">${esc(cached)}</div>` : loadingHtml('Sinusulat ang buong chapter...')}
+          </div>
+          <div class="bp-modal-btnrow">
+            ${cached ? `
+              <button class="bp-btn ghost" id="modal-regen">I-regenerate</button>
+              <button class="bp-btn" id="modal-copy">Kopyahin (para sa Canva)</button>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modal-close').addEventListener('click', closeChapterModal);
+    document.getElementById('modal-backdrop').addEventListener('click', (e)=>{
+      if(e.target.id === 'modal-backdrop') closeChapterModal();
+    });
+
+    if(cached){
+      attachModalButtons(idx);
+    } else {
+      generateFullChapter(idx);
+    }
+  }
+
+  function attachModalButtons(idx){
+    const copyBtn = document.getElementById('modal-copy');
+    const regenBtn = document.getElementById('modal-regen');
+    if(copyBtn){
+      copyBtn.addEventListener('click', ()=>{
+        navigator.clipboard.writeText(state.chapterContentCache[idx]).then(()=>{
+          const old = copyBtn.textContent;
+          copyBtn.textContent = 'Nakopya [OK]';
+          setTimeout(()=>{ copyBtn.textContent = old; }, 1600);
+        });
+      });
+    }
+    if(regenBtn){
+      regenBtn.addEventListener('click', ()=>{
+        delete state.chapterContentCache[idx];
+        generateFullChapter(idx);
+      });
+    }
+  }
+
+  async function generateFullChapter(idx){
+    const c = state.chaptersList[idx];
+    const prob = state.problemsList[state.chosenProblemIdx];
+    const concept = state.conceptsList[state.chosenConceptIdx];
+    const clarity = `I help ${state.sino} struggling with ${prob.title} through ${concept.title}`;
+
+    const prompt = `Sumulat ng kumpletong laman ng isang chapter ng eBook, batay sa impormasyong ito:
+
+CLARITY SENTENCE: ${clarity}
+CHAPTER TITLE: ${c.title}
+CHAPTER FOCUS: ${c.focus}
+BUONG PROBLEMA: ${prob.description}
+FRAMEWORK/SOLUSYON: ${concept.description}
+
+Sundin nang eksakto ang istrukturang ito (9 sections), panatilihin ang mga section header/numero, at isulat ang laman sa Filipino/Taglish, malinaw at kaswal ang tono, parang kausap mo ang reader nang personal:
+
+CHAPTER TITLE
+[Isang hook + malinaw na benefit, 1-2 pangungusap]
+
+1. CHAPTER OPENING (HOOK)
+[Bakit mahalaga ang topic, anong problema ang malulutas, ano ang matututunan sa chapter na ito]
+
+2. THE PROBLEM / PAIN POINT
+[Common mistakes, frustrations, maling paniniwala, at kasalukuyang sitwasyon ng reader]
+
+3. CORE LESSON / NEW UNDERSTANDING
+[Pangunahing konsepto, mahahalagang prinsipyo, bakit nangyayari ang problema, bagong paraan ng pag-iisip]
+
+4. YOUR FRAMEWORK / METHOD
+Step 1: [pangalan ng hakbang] - [paliwanag, bakit mahalaga]
+Step 2: [pangalan ng hakbang] - [paliwanag, paano gamitin]
+Step 3: [pangalan ng hakbang] - [paliwanag, inaasahang resulta]
+
+5. STEP-BY-STEP IMPLEMENTATION
+[Detalyadong hakbang-hakbang, bawat isa may: ano ang gagawin, paano gawin, halimbawa, tip]
+
+6. REAL EXAMPLES / CASE STUDY
+[Isang before-and-after o scenario na kaugnay sa topic ng chapter]
+
+7. CHAPTER TOOLKIT
+[Listahan ng 4-6 items - checklist, worksheet, template, script, planner, o cheat sheet na magagamit agad]
+
+8. CHAPTER SUMMARY
+After this chapter, you learned:
+- [key lesson 1]
+- [key lesson 2]
+- [key lesson 3]
+
+9. SMALL WIN CHALLENGE
+[Isang maliit, actionable na gawain na matatapos ngayong araw din]
+
+Mahalagang panuto: plain text lang, walang markdown symbols tulad ng ** o ## o #. Panatilihin ang mga numbered section labels na nakasulat sa itaas (1. CHAPTER OPENING, 2. THE PROBLEM, atbp) nang eksakto, dahil ico-copy-paste ito diretso sa Canva.`;
+
+    try{
+      const text = await callClaudeRaw(prompt);
+      state.chapterContentCache[idx] = text;
+      const body = document.getElementById('modal-body');
+      if(body){
+        body.innerHTML = `<div class="bp-chapter-content" id="modal-content">${esc(text)}</div>`;
+        document.querySelector('.bp-modal-btnrow').innerHTML = `
+          <button class="bp-btn ghost" id="modal-regen">I-regenerate</button>
+          <button class="bp-btn" id="modal-copy">Kopyahin (para sa Canva)</button>
+        `;
+        attachModalButtons(idx);
+      }
+    }catch(err){
+      const body = document.getElementById('modal-body');
+      if(body){
+        body.innerHTML = `<div class="bp-error">[!] May problema sa paghingi ng datos - subukan muli.</div>`;
+        document.querySelector('.bp-modal-btnrow').innerHTML = `<button class="bp-btn" id="modal-retry">Subukan Muli</button>`;
+        document.getElementById('modal-retry').addEventListener('click', ()=> generateFullChapter(idx));
+      }
+    }
+  }
+
   function render(){
     renderRuler();
     renderSentence();
+    if(state.view === 'preview'){ renderBookPreview(); return; }
     if(state.step === 1) renderStep1();
     else if(state.step === 2) renderStep2();
     else if(state.step === 3) renderStep3();
@@ -566,3 +884,4 @@
   render();
 })();
 </script>
+INDEXEOF
