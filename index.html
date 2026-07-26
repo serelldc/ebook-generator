@@ -447,8 +447,8 @@
   const copyIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
 
   // PALITAN ito ng URL ng Cloudflare Worker mo pagkatapos i-deploy
-  // (hal. "https://ebook-blueprint-proxy.serelldc.workers.dev")
-  const WORKER_URL = "https://ebook-blueprint-proxy.serelldc.workers.dev";
+  // (hal. "https://clarity-engine-proxy.serellydc.workers.dev")
+  const WORKER_URL = "https://clarity-engine-proxy.serellydc.workers.dev";
 
   async function callClaude(userPrompt, jsonInstruction){
     if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
