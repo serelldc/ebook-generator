@@ -1,103 +1,104 @@
 // worker.js
-// Cloudflare Worker na proxy papunta sa Google Gemini API.
+// Cloudflare Worker na proxy papunta sa Anthropic API.
 // Ang API key ay nakatago dito sa server side (secret), hindi kailanman
-// lumalabas sa GitHub Pages site na public.
-//
-// Gumagamit ng Gemini API dahil FREE ang tier nito (walang billing/credit
-// card na kailangan) - kunin ang key sa aistudio.google.com/apikey at
-// ilagay bilang secret na "GEMINI_API_KEY" sa Settings > Variables and
-// Secrets ng Worker na ito.
+// lumalabas sa public na site.
 
 export default {
   async fetch(request, env) {
-    // PALITAN ito ng eksaktong URL ng GitHub Pages mo.
-    // Kung gusto mong tumakbo din sa localhost habang tine-test, dagdagan
-    // na lang ng kondisyon sa baba.
-    const ALLOWED_ORIGIN = "https://serelldc.github.io";
+    // Mga origin na pinapayagan.
+    // - Ang production GitHub Pages site mo.
+    // - "null" = kapag binuksan mo ang index.html nang diretso mula sa file:// (local testing).
+    // - localhost = kapag gumamit ka ng local server (hal. python3 -m http.server).
+    // TANGGALIN ang "null" at ang mga localhost entry kapag live na ang site,
+    // para hindi magamit ng kahit sino ang API key mo.
+    const ALLOWED_ORIGINS = [
+      "https://serelldc.github.io",
+      "null",
+      "http://localhost:8000",
+      "http://127.0.0.1:8000",
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+    ];
+
+    const origin = request.headers.get("Origin") || "";
+    const allowOrigin = ALLOWED_ORIGINS.includes(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
 
     const corsHeaders = {
-      "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+      "Access-Control-Allow-Origin": allowOrigin,
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Max-Age": "86400",
+      "Vary": "Origin",
     };
+
+    const json = (obj, status) =>
+      new Response(JSON.stringify(obj), {
+        status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
 
     // Preflight request ng browser
     if (request.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { status: 204, headers: corsHeaders });
+    }
+
+    // Health check - para matingnan mo sa browser kung buhay ang worker
+    if (request.method === "GET") {
+      return json(
+        {
+          ok: true,
+          hasKey: Boolean(env.ANTHROPIC_API_KEY),
+          yourOrigin: origin || "(wala)",
+          originAllowed: ALLOWED_ORIGINS.includes(origin),
+        },
+        200
+      );
     }
 
     if (request.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), {
-        status: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: { message: "Method not allowed" } }, 405);
+    }
+
+    if (!env.ANTHROPIC_API_KEY) {
+      return json(
+        { error: { message: "Walang ANTHROPIC_API_KEY na naka-set sa worker secrets." } },
+        500
+      );
     }
 
     let body;
     try {
       body = await request.json();
     } catch (err) {
-      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: { message: "Invalid JSON body" } }, 400);
     }
 
-    // Default model kung wala munang binigay ang client.
-    const model = body.model || "gemini-3.5-flash";
-
-    // Simpleng safety cap para hindi maabuso ang key mo kung may
-    // makahanap ng URL ng worker mo. Ang buong-chapter generation
-    // (9 sections, 5-10 pages) ay nangangailangan ng mas malaking
-    // output budget, kaya hindi na napuputol/na-truncate ang mga chapter.
-    const generationConfig = body.generationConfig || {};
-    if (generationConfig.maxOutputTokens && generationConfig.maxOutputTokens > 8000) {
-      generationConfig.maxOutputTokens = 8000;
+    // Safety cap - mataas na para kasya ang buong chapter (humihingi ang app ng 4500).
+    if (!body.max_tokens || body.max_tokens > 8000) {
+      body.max_tokens = 8000;
     }
-
-    const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-    // Simpleng retry-with-backoff para sa 429 (Too Many Requests) mula sa
-    // libreng tier ng Gemini. Habang marami pang gumagamit nang sabay-sabay,
-    // sinusubukan munang hintayin at ulitin ang request bago tuluyang
-    // sumuko at ibalik ang error sa client. Hindi nito tinatanggal ang
-    // pang-araw-araw na quota (RPD) pero nakakatulong ito sa pansamantalang
-    // per-minute (RPM) bursts.
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    const MAX_ATTEMPTS = 3;
-    const BACKOFF_MS = [0, 4000, 9000]; // walang hintay sa 1st try, tapos 4s, 9s
 
     try {
-      let googleRes;
-      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-        if (BACKOFF_MS[attempt]) await sleep(BACKOFF_MS[attempt]);
+      const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": env.ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify(body),
+      });
 
-        googleRes = await fetch(googleUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": env.GEMINI_API_KEY,
-          },
-          body: JSON.stringify({
-            contents: body.contents,
-            generationConfig,
-          }),
-        });
-
-        if (googleRes.status !== 429) break; // success o ibang klaseng error, huwag na ulitin
-      }
-
-      const data = await googleRes.text();
+      const data = await anthropicRes.text();
 
       return new Response(data, {
-        status: googleRes.status,
+        status: anthropicRes.status,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: { message: err.message } }, 500);
     }
   },
 };
