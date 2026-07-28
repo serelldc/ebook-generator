@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Ebook Blueprint Generator</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
 
@@ -18,6 +24,7 @@
 }
 
 *{box-sizing:border-box;}
+html,body{margin:0;padding:0;min-height:100%;background:var(--bg);}
 
 .bp-root{
   background:
@@ -28,8 +35,7 @@
   color:var(--paper);
   font-family:'Space Grotesk', sans-serif;
   padding:32px 20px 48px;
-  min-height:100%;
-  border-radius:8px;
+  min-height:100vh;
 }
 
 .bp-wrap{max-width:1080px;margin:0 auto;}
@@ -146,7 +152,6 @@
 .bp-btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
 
 .bp-arrow{font-family:'IBM Plex Mono',monospace;}
-.bp-btn svg{width:14px;height:14px;flex-shrink:0;}
 
 /* OPTION LIST */
 .bp-option{
@@ -189,13 +194,14 @@
   width:20px;height:20px;border-radius:50%;
   border:2.5px solid var(--rule);border-top-color:var(--amber-dark);
   animation:bp-spin .8s linear infinite;
+  flex:none;
 }
 @keyframes bp-spin{to{transform:rotate(360deg);}}
 
 .bp-error{
   background:rgba(193,80,46,0.1);border:1px solid var(--err);color:var(--err);
-  padding:12px 14px;border-radius:3px;font-size:13.5px;margin-bottom:14px;
-  font-family:'IBM Plex Mono',monospace;
+  padding:12px 14px;border-radius:3px;font-size:13px;margin-bottom:14px;
+  font-family:'IBM Plex Mono',monospace;line-height:1.6;word-break:break-word;
 }
 
 /* SIDEBAR SPEC */
@@ -276,9 +282,6 @@
   font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15.5px;color:var(--ink);
   flex:1;
 }
-.bp-toc-item .toc-dots{
-  flex:1;border-bottom:1px dotted var(--rule);margin:0 4px 4px;min-width:20px;
-}
 .bp-book-note{
   margin-top:26px;padding:16px 18px;background:rgba(232,163,61,0.10);
   border-left:3px solid var(--amber-dark);font-family:'Source Serif 4',serif;
@@ -320,45 +323,10 @@
   white-space:pre-wrap;font-size:14.5px;line-height:1.75;color:var(--ink);
   max-height:52vh;overflow-y:auto;padding-right:6px;
 }
-.bp-chapter-content b{font-family:'Space Grotesk',sans-serif;color:var(--amber-dark);}
 .bp-modal-btnrow{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
-
-/* COVER PROMPT MODAL EXTRAS */
-.bp-cover-field{margin-bottom:16px;}
-.bp-cover-field label{
-  display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
-  letter-spacing:.05em;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;
-}
-.bp-cover-field select, .bp-cover-field textarea{
-  width:100%;border:1.5px solid var(--rule);border-radius:3px;
-  background:var(--paper);font-family:'Source Serif 4',serif;font-size:15px;
-  color:var(--ink);padding:8px 10px;outline:none;transition:border-color .2s;
-}
-.bp-cover-field select:focus, .bp-cover-field textarea:focus{border-color:var(--amber-dark);}
-.bp-cover-field textarea{resize:vertical;min-height:56px;font-family:'Source Serif 4',serif;}
-.bp-cover-hint{font-size:12px;color:var(--ink-soft);margin-top:4px;font-style:italic;}
-.bp-prompt-card{
-  border:1.5px solid var(--rule);border-radius:3px;padding:16px 18px;margin-bottom:14px;
-  background:rgba(232,163,61,0.06);
-}
-.bp-prompt-card .prompt-label{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--amber-dark);margin-bottom:8px;display:flex;
-  align-items:center;justify-content:space-between;gap:10px;
-}
-.bp-prompt-card .prompt-text{
-  font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.65;
-  color:var(--ink);white-space:pre-wrap;margin-bottom:10px;
-}
-.bp-copy-icon-btn{
-  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;
-  background:transparent;color:var(--amber-dark);border:1.5px solid var(--amber-dark);
-  padding:6px 12px;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
-  transition:background .15s,color .15s;
-}
-.bp-copy-icon-btn:hover{background:var(--amber-dark);color:var(--paper);}
-.bp-copy-icon-btn svg{width:13px;height:13px;}
 </style>
+</head>
+<body>
 
 <div class="bp-root">
   <div class="bp-wrap">
@@ -382,19 +350,26 @@
         <div class="bp-side-note" id="bp-side-note">Punan muna ang target audience sa kaliwa para simulan.</div>
         <span class="bp-formula-toggle" id="bp-formula-toggle">Tingnan ang 10/10 Formula v</span>
         <div class="bp-formula-box" id="bp-formula-box">
-          <span class="step">Problem</span> -> Explanation -> <span class="step">Framework</span> -> Step-by-Step Guide -> Real Example -> Checklist -> Action Plan -> <span class="step">Transformation</span><br/><br/>
+          <span class="step">Problem</span> -&gt; Explanation -&gt; <span class="step">Framework</span> -&gt; Step-by-Step Guide -&gt; Real Example -&gt; Checklist -&gt; Action Plan -&gt; <span class="step">Transformation</span><br/><br/>
           Ang pinakamahalagang sukatan: hindi kung gaano karaming impormasyon, kundi kung gaano kalaki ang resulta ng mambabasa.
         </div>
       </div>
     </div>
 
-    <div class="bp-footer">EBOOK BLUEPRINT - SHEET 01 OF 04 - GENERATED WITH GEMINI</div>
+    <div class="bp-footer">EBOOK BLUEPRINT - SHEET 01 OF 04 - GENERATED WITH CLAUDE</div>
   </div>
   <div id="modal-root"></div>
 </div>
 
 <script>
 (function(){
+  // ====== CONFIG ======
+  // URL ng iyong Cloudflare Worker proxy (hindi dapat naglalaman ng API key ang file na ito)
+  const WORKER_URL = "https://ebook-blueprint-proxy.serelldc.workers.dev";
+  // Model ID - dapat tugma sa isang valid na Anthropic model
+  const MODEL = "claude-sonnet-4-5";
+  // ====================
+
   const state = {
     step: 1,
     view: 'wizard',
@@ -406,115 +381,97 @@
     chaptersList: null,
     chapterContentCache: {},
     loading: false,
-    error: null,
-    cover: {
-      style: 'Minimalist / Flat Design',
-      palette: 'Warm & Earthy',
-      mood: '',
-      loading: false,
-      error: null,
-      prompts: null
-    }
+    error: null
   };
 
   const stations = ['SENTENCE','PROBLEMA','SOLUSYON','OUTLINE'];
 
-  const COVER_STYLES = [
-    'Minimalist / Flat Design',
-    'Modern Illustration',
-    'Photographic / Realistic',
-    '3D Render',
-    'Bold Typography-Focused',
-    'Vintage / Retro',
-    'Corporate / Professional',
-    'Playful / Cartoon'
-  ];
-
-  const COVER_PALETTES = [
-    'Warm & Earthy',
-    'Cool & Professional',
-    'Bold & Vibrant',
-    'Pastel & Soft',
-    'Monochrome / Black & White'
-  ];
-
   function esc(s){
-    const d = document.createElement('div');
-    d.textContent = s == null ? '' : s;
-    return d.innerHTML;
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
   }
 
-  const copyIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
-
-  // PALITAN ito ng URL ng Cloudflare Worker mo pagkatapos i-deploy
-  // (hal. "https://clarity-engine-proxy.serellydc.workers.dev")
-  const WORKER_URL = "https://clarity-engine-proxy.serellydc.workers.dev";
-
-  // Ginagamit ang Google Gemini API (sa likod ng Cloudflare Worker) dahil
-  // may free tier ito na walang kailangang billing/credit card.
-  const GEMINI_MODEL = "gemini-3.5-flash";
-
-  function extractGeminiText(data){
-    const candidate = (data.candidates && data.candidates[0]) || {};
-    const parts = (candidate.content && candidate.content.parts) || [];
-    return parts.map(p => p.text || "").join("\n").trim();
-  }
-
-  // Ibinabalik ang mas malinaw na mensahe kapag rate-limited (429) kesa sa
-  // generic na "may problema". Ginagamit ito sa lahat ng catch block.
-  function friendlyErrorMsg(err){
-    if(err && err.status === 429){
-      return 'Marami munang gumagamit ngayon (rate limit). Sandaling maghintay ng 1-2 minuto bago subukan muli';
+  // Kinukuha ang text mula sa iba't ibang posibleng hugis ng response ng worker
+  function extractText(data){
+    if(typeof data === 'string') return data.trim();
+    if(Array.isArray(data.content)){
+      return data.content.map(b => (typeof b === 'string' ? b : (b && b.text) || '')).join('\n').trim();
     }
-    return 'May problema sa paghingi ng datos';
+    if(typeof data.text === 'string') return data.text.trim();
+    if(typeof data.completion === 'string') return data.completion.trim();
+    if(data.error){
+      throw new Error('Worker/API error: ' + (data.error.message || JSON.stringify(data.error)));
+    }
+    throw new Error('Hindi mabasa ang sagot ng API: ' + JSON.stringify(data).slice(0,200));
+  }
+
+  // Hinuhugot ang unang balanced JSON object kahit may kasamang ibang text
+  function parseJsonLoose(text){
+    let clean = text.replace(/```[a-zA-Z]*/g,'').replace(/```/g,'').trim();
+    try{ return JSON.parse(clean); }catch(e){}
+    const start = clean.indexOf('{');
+    if(start === -1) throw new Error('Walang JSON sa sagot: ' + clean.slice(0,160));
+    let depth = 0, inStr = false, escNext = false;
+    for(let i = start; i < clean.length; i++){
+      const ch = clean[i];
+      if(escNext){ escNext = false; continue; }
+      if(ch === '\\'){ escNext = true; continue; }
+      if(ch === '"'){ inStr = !inStr; continue; }
+      if(inStr) continue;
+      if(ch === '{') depth++;
+      else if(ch === '}'){
+        depth--;
+        if(depth === 0){
+          return JSON.parse(clean.slice(start, i + 1));
+        }
+      }
+    }
+    throw new Error('Sirang JSON sa sagot: ' + clean.slice(0,160));
+  }
+
+  async function postToWorker(body){
+    let res;
+    try{
+      res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+    }catch(netErr){
+      throw new Error('Hindi maabot ang worker (network/CORS): ' + netErr.message);
+    }
+    const raw = await res.text();
+    if(!res.ok){
+      throw new Error('API error ' + res.status + ' - ' + raw.slice(0,200));
+    }
+    let data;
+    try{ data = JSON.parse(raw); }
+    catch(e){ throw new Error('Hindi JSON ang sagot ng worker: ' + raw.slice(0,200)); }
+    return extractText(data);
   }
 
   async function callClaude(userPrompt, jsonInstruction){
-    if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
-      throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
-    }
-    const fullPrompt = userPrompt + "\n\n" + jsonInstruction + "\n\nSagutin sa wikang Filipino/Taglish. Ibalik LAMANG ang JSON object, walang paunang salita, walang markdown backticks, walang paliwanag.";
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: GEMINI_MODEL,
-        contents: [ { parts: [ { text: fullPrompt } ] } ],
-        generationConfig: {
-          maxOutputTokens: 3000,
-          responseMimeType: "application/json",
-          thinkingConfig: { thinkingLevel: "low" }
-        }
-      })
+    const text = await postToWorker({
+      model: MODEL,
+      max_tokens: 1500,
+      messages: [{
+        role: "user",
+        content: userPrompt + "\n\n" + jsonInstruction + "\n\nSagutin sa wikang Filipino/Taglish. Ibalik LAMANG ang JSON object, walang paunang salita, walang markdown backticks, walang paliwanag."
+      }]
     });
-    if(!res.ok){ const e = new Error("API error " + res.status); e.status = res.status; throw e; }
-    const data = await res.json();
-    const text = extractGeminiText(data);
-    const clean = text.replace(/```json|```/g, "").trim();
-    return JSON.parse(clean);
+    return parseJsonLoose(text);
   }
 
-  async function callClaudeRaw(userPrompt, maxTokens, asJson){
-    if(WORKER_URL.includes("YOUR-SUBDOMAIN")){
-      throw new Error("Hindi pa naka-configure ang WORKER_URL sa index.html");
-    }
-    const generationConfig = {
-      maxOutputTokens: maxTokens || 8000,
-      thinkingConfig: { thinkingLevel: "low" }
-    };
-    if(asJson) generationConfig.responseMimeType = "application/json";
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: GEMINI_MODEL,
-        contents: [ { parts: [ { text: userPrompt } ] } ],
-        generationConfig
-      })
+  async function callClaudeRaw(userPrompt){
+    return await postToWorker({
+      model: MODEL,
+      max_tokens: 4500,
+      messages: [{ role: "user", content: userPrompt }]
     });
-    if(!res.ok){ const e = new Error("API error " + res.status); e.status = res.status; throw e; }
-    const data = await res.json();
-    return extractGeminiText(data);
   }
 
   function renderRuler(){
@@ -524,7 +481,7 @@
       let cls = '';
       if(n === state.step) cls = 'active';
       else if(n < state.step) cls = 'done';
-      return `<div class="bp-station ${cls}"><span class="num">0${n}</span>${s}</div>`;
+      return '<div class="bp-station ' + cls + '"><span class="num">0' + n + '</span>' + s + '</div>';
     }).join('');
   }
 
@@ -551,7 +508,7 @@
   }
 
   function errorHtml(){
-    return state.error ? `<div class="bp-error">[!] ${esc(state.error)} - subukan muli.</div>` : '';
+    return state.error ? `<div class="bp-error">[!] ${esc(state.error)}</div>` : '';
   }
 
   function renderStep1(){
@@ -568,10 +525,12 @@
       </div>
       ${state.loading ? loadingHtml('Hinahanap ang top 10 problema...') : `
       <div class="bp-btn-row">
-        <button class="bp-btn" id="btn-find-problems">Hanapin ang Top 10 Problema <span class="bp-arrow">-></span></button>
+        <button class="bp-btn" id="btn-find-problems" type="button">Hanapin ang Top 10 Problema <span class="bp-arrow">-&gt;</span></button>
       </div>`}
     `;
-    document.getElementById('in-sino').addEventListener('input', e => { state.sino = e.target.value; renderSentence(); });
+    const input = document.getElementById('in-sino');
+    input.addEventListener('input', e => { state.sino = e.target.value; renderSentence(); });
+    input.addEventListener('keydown', e => { if(e.key === 'Enter' && !state.loading) onFindProblems(); });
     if(!state.loading){
       document.getElementById('btn-find-problems').addEventListener('click', onFindProblems);
     }
@@ -584,13 +543,17 @@
       const prompt = `I'd like to create an e-book that helps ${state.sino}. Help me find the biggest and most urgent problem that this market has, and with the highest demand for solutions. Provide a list of the top 10 specific and detailed problems and frustrations they face. Arrange in order of urgency and demand for a solution.`;
       const jsonInstr = `Ibalik bilang JSON object na may ganitong hugis: {"problems":[{"title":"maikling pamagat, max 8 salita","description":"1 pangungusap na paliwanag, max 22 salita"}]} - eksaktong 10 items, nakaayos mula pinaka-urgent papuntang pinaka-hindi.`;
       const data = await callClaude(prompt, jsonInstr);
+      if(!data || !Array.isArray(data.problems) || !data.problems.length){
+        throw new Error('Walang "problems" array sa sagot.');
+      }
       state.problemsList = data.problems.slice(0,10);
+      state.chosenProblemIdx = null;
       state.loading = false;
       state.step = 2;
       render();
     }catch(err){
       state.loading = false;
-      state.error = friendlyErrorMsg(err);
+      state.error = err.message || String(err);
       renderStep1();
     }
   }
@@ -598,9 +561,9 @@
   function renderStep2(){
     const sheet = document.getElementById('bp-sheet');
     if(!state.problemsList){ state.step = 1; render(); return; }
-    let optionsHtml = state.problemsList.map((p,i)=>`
+    const optionsHtml = state.problemsList.map((p,i)=>`
       <div class="bp-option ${state.chosenProblemIdx===i?'selected':''}" data-idx="${i}">
-        <div class="idx">0${i+1}</div>
+        <div class="idx">${String(i+1).padStart(2,'0')}</div>
         <div class="body"><b>${esc(p.title)}</b><span>${esc(p.description)}</span></div>
       </div>
     `).join('');
@@ -613,8 +576,8 @@
       <div id="options-wrap">${optionsHtml}</div>
       ${state.loading ? loadingHtml('Bumubuo ng 5 unique concepts...') : `
       <div class="bp-btn-row">
-        <button class="bp-btn ghost" id="btn-back-1"><- Bumalik</button>
-        <button class="bp-btn" id="btn-to-step3" ${state.chosenProblemIdx===null?'disabled':''}>Bumuo ng Unique Concepts <span class="bp-arrow">-></span></button>
+        <button class="bp-btn ghost" id="btn-back-1" type="button">&lt;- Bumalik</button>
+        <button class="bp-btn" id="btn-to-step3" type="button" ${state.chosenProblemIdx===null?'disabled':''}>Bumuo ng Unique Concepts <span class="bp-arrow">-&gt;</span></button>
       </div>`}
     `;
     sheet.querySelectorAll('.bp-option').forEach(opt=>{
@@ -639,13 +602,17 @@
       const prompt = `OK. I'd like to write an e-book based on this problem: "${chosen.title} - ${chosen.description}". Give me 5 unique core concepts as a solution. The objective is to make this e-book different, attractive, and stand out over its competitors.`;
       const jsonInstr = `Ibalik bilang JSON object: {"concepts":[{"title":"maikling pamagat ng konsepto, max 7 salita","description":"1 pangungusap kung bakit ito unique, max 22 salita"}]} - eksaktong 5 items.`;
       const data = await callClaude(prompt, jsonInstr);
+      if(!data || !Array.isArray(data.concepts) || !data.concepts.length){
+        throw new Error('Walang "concepts" array sa sagot.');
+      }
       state.conceptsList = data.concepts.slice(0,5);
+      state.chosenConceptIdx = null;
       state.loading = false;
       state.step = 3;
       render();
     }catch(err){
       state.loading = false;
-      state.error = friendlyErrorMsg(err);
+      state.error = err.message || String(err);
       renderStep2();
     }
   }
@@ -653,9 +620,9 @@
   function renderStep3(){
     const sheet = document.getElementById('bp-sheet');
     if(!state.conceptsList){ state.step = 2; render(); return; }
-    let optionsHtml = state.conceptsList.map((c,i)=>`
+    const optionsHtml = state.conceptsList.map((c,i)=>`
       <div class="bp-option ${state.chosenConceptIdx===i?'selected':''}" data-idx="${i}">
-        <div class="idx">0${i+1}</div>
+        <div class="idx">${String(i+1).padStart(2,'0')}</div>
         <div class="body"><b>${esc(c.title)}</b><span>${esc(c.description)}</span></div>
       </div>
     `).join('');
@@ -668,8 +635,8 @@
       <div id="options-wrap">${optionsHtml}</div>
       ${state.loading ? loadingHtml('Bumubuo ng 10-chapter outline...') : `
       <div class="bp-btn-row">
-        <button class="bp-btn ghost" id="btn-back-2"><- Bumalik</button>
-        <button class="bp-btn" id="btn-to-step4" ${state.chosenConceptIdx===null?'disabled':''}>Bumuo ng Outline <span class="bp-arrow">-></span></button>
+        <button class="bp-btn ghost" id="btn-back-2" type="button">&lt;- Bumalik</button>
+        <button class="bp-btn" id="btn-to-step4" type="button" ${state.chosenConceptIdx===null?'disabled':''}>Bumuo ng Outline <span class="bp-arrow">-&gt;</span></button>
       </div>`}
     `;
     sheet.querySelectorAll('.bp-option').forEach(opt=>{
@@ -696,13 +663,20 @@
       const prompt = `Give me an outline with a maximum of 10 chapters for an e-book based on this: ${clarity}. Context: ang problema ay "${prob.description}" at ang framework/solusyon ay "${concept.description}".`;
       const jsonInstr = `Ibalik bilang JSON object: {"chapters":[{"number":1,"title":"pamagat ng kabanata, max 8 salita","focus":"1 pangungusap na naglalarawan sa laman/aksyon ng kabanata, max 22 salita"}]} - hanggang 10 items, sundin ang daloy na Problem -> Explanation -> Framework -> Step-by-Step -> Example -> Checklist -> Action Plan -> Transformation.`;
       const data = await callClaude(prompt, jsonInstr);
-      state.chaptersList = data.chapters.slice(0,10);
+      if(!data || !Array.isArray(data.chapters) || !data.chapters.length){
+        throw new Error('Walang "chapters" array sa sagot.');
+      }
+      state.chaptersList = data.chapters.slice(0,10).map((c,i)=>({
+        number: c.number || (i+1),
+        title: c.title || ('Kabanata ' + (i+1)),
+        focus: c.focus || ''
+      }));
       state.loading = false;
       state.step = 4;
       render();
     }catch(err){
       state.loading = false;
-      state.error = friendlyErrorMsg(err);
+      state.error = err.message || String(err);
       renderStep3();
     }
   }
@@ -712,36 +686,33 @@
     if(!state.chaptersList){ state.step = 3; render(); return; }
     const chaptersHtml = state.chaptersList.map((c,i)=>`
       <div class="bp-chapter" data-cidx="${i}">
-        <div class="num">${c.number}</div>
+        <div class="num">${esc(c.number)}</div>
         <div class="body"><b>${esc(c.title)}</b><span>${esc(c.focus)}</span></div>
-        <div class="arrow-hint">Buksan ang buong chapter -></div>
+        <div class="arrow-hint">Buksan ang buong chapter -&gt;</div>
       </div>
     `).join('');
     sheet.innerHTML = `
       <div class="c3"></div><div class="c4"></div>
       <div class="bp-step-label">Hakbang 04 - Outline</div>
       <h2 class="bp-h2">Handa na ang blueprint ng iyong eBook</h2>
-      <p class="bp-p">Ito ang buong outline batay sa iyong clarity sentence. I-click ang isang chapter para buuin ang buong laman nito, o gumawa ng prompt para sa cover ng aklat.</p>
+      <p class="bp-p">Ito ang buong outline batay sa iyong clarity sentence. Puwede mo pang i-regenerate ang bawat hakbang kung gusto ng ibang direksyon.</p>
       <div id="chapters-wrap">${chaptersHtml}</div>
       <div class="bp-btn-row">
-        <button class="bp-btn ghost" id="btn-back-3"><- Bumalik</button>
-        <button class="bp-btn ghost" id="btn-copy">${copyIconSvg} Kopyahin ang Buod</button>
-        <button class="bp-btn ghost" id="btn-cover">Gumawa ng Cover Prompt</button>
-        <button class="bp-btn" id="btn-preview">Tingnan ang Buong Aklat -></button>
-        <button class="bp-btn ghost" id="btn-restart">Simulan Muli</button>
+        <button class="bp-btn ghost" id="btn-back-3" type="button">&lt;- Bumalik</button>
+        <button class="bp-btn ghost" id="btn-copy" type="button">Kopyahin ang Buod</button>
+        <button class="bp-btn" id="btn-preview" type="button">Tingnan ang Buong Aklat -&gt;</button>
+        <button class="bp-btn ghost" id="btn-restart" type="button">Simulan Muli</button>
       </div>
     `;
     document.getElementById('btn-preview').addEventListener('click', ()=>{ state.view='preview'; render(); });
     document.getElementById('btn-back-3').addEventListener('click', ()=>{ state.step=3; render(); });
-    document.getElementById('btn-cover').addEventListener('click', openCoverModal);
     sheet.querySelectorAll('.bp-chapter').forEach(el=>{
       el.addEventListener('click', ()=>{
-        const idx = parseInt(el.dataset.cidx, 10);
-        openChapterModal(idx);
+        openChapterModal(parseInt(el.dataset.cidx, 10));
       });
     });
     document.getElementById('btn-restart').addEventListener('click', ()=>{
-      Object.assign(state, { step:1, sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, chapterContentCache:{}, loading:false, error:null });
+      Object.assign(state, { step:1, view:'wizard', sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, chapterContentCache:{}, loading:false, error:null });
       render();
     });
     document.getElementById('btn-copy').addEventListener('click', ()=>{
@@ -752,13 +723,33 @@
       out += `SOLUSYON/FRAMEWORK: ${concept.title} - ${concept.description}\n\n`;
       out += `OUTLINE:\n`;
       state.chaptersList.forEach(c=>{ out += `${c.number}. ${c.title} - ${c.focus}\n`; });
-      navigator.clipboard.writeText(out).then(()=>{
-        const btn = document.getElementById('btn-copy');
-        const old = btn.innerHTML;
-        btn.innerHTML = copyIconSvg + ' Nakopya [OK]';
-        setTimeout(()=>{ btn.innerHTML = old; }, 1600);
-      });
+      copyText(out, document.getElementById('btn-copy'));
     });
+  }
+
+  // Clipboard na may fallback kapag walang navigator.clipboard (hal. file:// o non-HTTPS)
+  function copyText(text, btn){
+    const done = ()=>{
+      if(!btn) return;
+      const old = btn.textContent;
+      btn.textContent = 'Nakopya [OK]';
+      setTimeout(()=>{ btn.textContent = old; }, 1600);
+    };
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ alert('Hindi ma-copy automatically. I-select at kopyahin nang manu-mano.'); }
+    document.body.removeChild(ta);
   }
 
   function renderBookPreview(){
@@ -770,7 +761,7 @@
 
     const tocHtml = state.chaptersList.map(c=>`
       <div class="bp-toc-item">
-        <div class="toc-num">${String(c.number).padStart(2,'0')}</div>
+        <div class="toc-num">${esc(String(c.number).padStart(2,'0'))}</div>
         <div class="toc-title">${esc(c.title)}</div>
       </div>
     `).join('');
@@ -795,17 +786,15 @@
       </div>
 
       <div class="bp-btn-row print-hide">
-        <button class="bp-btn ghost" id="btn-back-outline"><- Bumalik sa Outline</button>
-        <button class="bp-btn ghost" id="btn-print">I-print / I-save bilang PDF</button>
-        <button class="bp-btn ghost" id="btn-copy-book">${copyIconSvg} Kopyahin ang Buod</button>
-        <button class="bp-btn ghost" id="btn-cover-book">Gumawa ng Cover Prompt</button>
-        <button class="bp-btn" id="btn-restart-book">Simulan Muli</button>
+        <button class="bp-btn ghost" id="btn-back-outline" type="button">&lt;- Bumalik sa Outline</button>
+        <button class="bp-btn ghost" id="btn-print" type="button">I-print / I-save bilang PDF</button>
+        <button class="bp-btn ghost" id="btn-copy-book" type="button">Kopyahin ang Buod</button>
+        <button class="bp-btn" id="btn-restart-book" type="button">Simulan Muli</button>
       </div>
     `;
 
     document.getElementById('btn-back-outline').addEventListener('click', ()=>{ state.view='wizard'; render(); });
     document.getElementById('btn-print').addEventListener('click', ()=>{ window.print(); });
-    document.getElementById('btn-cover-book').addEventListener('click', openCoverModal);
     document.getElementById('btn-restart-book').addEventListener('click', ()=>{
       Object.assign(state, { step:1, view:'wizard', sino:'', problemsList:null, chosenProblemIdx:null, conceptsList:null, chosenConceptIdx:null, chaptersList:null, chapterContentCache:{}, loading:false, error:null });
       render();
@@ -816,18 +805,15 @@
       out += `SOLUSYON/FRAMEWORK: ${concept.title} - ${concept.description}\n\n`;
       out += `TALAAN NG MGA NILALAMAN:\n`;
       state.chaptersList.forEach(c=>{ out += `${c.number}. ${c.title}\n   ${c.focus}\n`; });
-      navigator.clipboard.writeText(out).then(()=>{
-        const btn = document.getElementById('btn-copy-book');
-        const old = btn.innerHTML;
-        btn.innerHTML = copyIconSvg + ' Nakopya [OK]';
-        setTimeout(()=>{ btn.innerHTML = old; }, 1600);
-      });
+      copyText(out, document.getElementById('btn-copy-book'));
     });
   }
 
   function closeChapterModal(){
     document.getElementById('modal-root').innerHTML = '';
+    document.removeEventListener('keydown', onModalKey);
   }
+  function onModalKey(e){ if(e.key === 'Escape') closeChapterModal(); }
 
   function openChapterModal(idx){
     const c = state.chaptersList[idx];
@@ -837,16 +823,16 @@
     modalRoot.innerHTML = `
       <div class="bp-modal-backdrop" id="modal-backdrop">
         <div class="bp-modal">
-          <button class="bp-modal-close" id="modal-close">x</button>
-          <div class="bp-modal-eyebrow">Kabanata ${c.number}</div>
+          <button class="bp-modal-close" id="modal-close" type="button">x</button>
+          <div class="bp-modal-eyebrow">Kabanata ${esc(c.number)}</div>
           <h3 class="bp-modal-title">${esc(c.title)}</h3>
           <div id="modal-body">
             ${cached ? `<div class="bp-chapter-content" id="modal-content">${esc(cached)}</div>` : loadingHtml('Sinusulat ang buong chapter...')}
           </div>
           <div class="bp-modal-btnrow">
             ${cached ? `
-              <button class="bp-btn ghost" id="modal-regen">I-regenerate</button>
-              <button class="bp-btn" id="modal-copy">${copyIconSvg} Kopyahin (para sa Canva)</button>
+              <button class="bp-btn ghost" id="modal-regen" type="button">I-regenerate</button>
+              <button class="bp-btn" id="modal-copy" type="button">Kopyahin (para sa Canva)</button>
             ` : ''}
           </div>
         </div>
@@ -857,6 +843,7 @@
     document.getElementById('modal-backdrop').addEventListener('click', (e)=>{
       if(e.target.id === 'modal-backdrop') closeChapterModal();
     });
+    document.addEventListener('keydown', onModalKey);
 
     if(cached){
       attachModalButtons(idx);
@@ -869,17 +856,15 @@
     const copyBtn = document.getElementById('modal-copy');
     const regenBtn = document.getElementById('modal-regen');
     if(copyBtn){
-      copyBtn.addEventListener('click', ()=>{
-        navigator.clipboard.writeText(state.chapterContentCache[idx]).then(()=>{
-          const old = copyBtn.innerHTML;
-          copyBtn.innerHTML = copyIconSvg + ' Nakopya [OK]';
-          setTimeout(()=>{ copyBtn.innerHTML = old; }, 1600);
-        });
-      });
+      copyBtn.addEventListener('click', ()=> copyText(state.chapterContentCache[idx], copyBtn));
     }
     if(regenBtn){
       regenBtn.addEventListener('click', ()=>{
         delete state.chapterContentCache[idx];
+        const body = document.getElementById('modal-body');
+        if(body) body.innerHTML = loadingHtml('Sinusulat ang buong chapter...');
+        const row = document.querySelector('.bp-modal-btnrow');
+        if(row) row.innerHTML = '';
         generateFullChapter(idx);
       });
     }
@@ -899,7 +884,7 @@ CHAPTER FOCUS: ${c.focus}
 BUONG PROBLEMA: ${prob.description}
 FRAMEWORK/SOLUSYON: ${concept.description}
 
-Sundin nang eksakto ang istrukturang ito (9 sections), panatilihin ang mga section header/numero, at isulat ang laman sa Filipino/Taglish, malinaw at kaswal ang tono, parang kausap mo ang reader nang personal. Target na haba: 5-10 pages kung ilalagay sa isang dokumento (humigit-kumbang 1200-2000 salita) - sapat para dalhin ang reader sa isang malinaw na maliit na transformation, hindi kulang, hindi rin sobrang haba:
+Sundin nang eksakto ang istrukturang ito (9 sections), panatilihin ang mga section header/numero, at isulat ang laman sa Filipino/Taglish, malinaw at kaswal ang tono, parang kausap mo ang reader nang personal:
 
 CHAPTER TITLE
 [Isang hook + malinaw na benefit, 1-2 pangungusap]
@@ -939,154 +924,34 @@ After this chapter, you learned:
 Mahalagang panuto: plain text lang, walang markdown symbols tulad ng ** o ## o #. Panatilihin ang mga numbered section labels na nakasulat sa itaas (1. CHAPTER OPENING, 2. THE PROBLEM, atbp) nang eksakto, dahil ico-copy-paste ito diretso sa Canva.`;
 
     try{
-      const text = await callClaudeRaw(prompt, 8000);
+      const text = await callClaudeRaw(prompt);
       state.chapterContentCache[idx] = text;
       const body = document.getElementById('modal-body');
       if(body){
         body.innerHTML = `<div class="bp-chapter-content" id="modal-content">${esc(text)}</div>`;
-        document.querySelector('.bp-modal-btnrow').innerHTML = `
-          <button class="bp-btn ghost" id="modal-regen">I-regenerate</button>
-          <button class="bp-btn" id="modal-copy">${copyIconSvg} Kopyahin (para sa Canva)</button>
-        `;
+        const row = document.querySelector('.bp-modal-btnrow');
+        if(row){
+          row.innerHTML = `
+            <button class="bp-btn ghost" id="modal-regen" type="button">I-regenerate</button>
+            <button class="bp-btn" id="modal-copy" type="button">Kopyahin (para sa Canva)</button>
+          `;
+        }
         attachModalButtons(idx);
       }
     }catch(err){
       const body = document.getElementById('modal-body');
       if(body){
-        body.innerHTML = `<div class="bp-error">[!] ${esc(friendlyErrorMsg(err))} - subukan muli.</div>`;
-        document.querySelector('.bp-modal-btnrow').innerHTML = `<button class="bp-btn" id="modal-retry">Subukan Muli</button>`;
-        document.getElementById('modal-retry').addEventListener('click', ()=> generateFullChapter(idx));
-      }
-    }
-  }
-
-  // ---- COVER IMAGE PROMPT GENERATOR ----
-
-  function suggestMood(){
-    if(!state.chaptersList) return '';
-    const prob = state.problemsList[state.chosenProblemIdx];
-    const concept = state.conceptsList[state.chosenConceptIdx];
-    return `Dapat maramdaman ng reader na may pag-asa at malinaw na direksyon - mula sa kalituhan tungo sa kalinawan. Kaugnay sa "${concept.title}" bilang solusyon sa "${prob.title}".`;
-  }
-
-  function openCoverModal(){
-    if(!state.chaptersList) return;
-    if(!state.cover.mood) state.cover.mood = suggestMood();
-    renderCoverModal();
-  }
-
-  function renderCoverModal(){
-    const prob = state.problemsList[state.chosenProblemIdx];
-    const concept = state.conceptsList[state.chosenConceptIdx];
-    const modalRoot = document.getElementById('modal-root');
-    const cov = state.cover;
-
-    const styleOptions = COVER_STYLES.map(s=>`<option value="${esc(s)}" ${cov.style===s?'selected':''}>${esc(s)}</option>`).join('');
-    const paletteOptions = COVER_PALETTES.map(p=>`<option value="${esc(p)}" ${cov.palette===p?'selected':''}>${esc(p)}</option>`).join('');
-
-    let promptsHtml = '';
-    if(cov.loading){
-      promptsHtml = loadingHtml('Bumubuo ng cover image prompt...');
-    } else if(cov.error){
-      promptsHtml = `<div class="bp-error">[!] ${esc(cov.error)} - subukan muli.</div>`;
-    } else if(cov.prompts){
-      promptsHtml = cov.prompts.map((p,i)=>`
-        <div class="bp-prompt-card">
-          <div class="prompt-label">
-            <span>${esc(p.label)}</span>
-            <button class="bp-copy-icon-btn" data-pidx="${i}">${copyIconSvg} Kopyahin</button>
-          </div>
-          <div class="prompt-text">${esc(p.prompt)}</div>
-        </div>
-      `).join('');
-    }
-
-    modalRoot.innerHTML = `
-      <div class="bp-modal-backdrop" id="cover-modal-backdrop">
-        <div class="bp-modal">
-          <button class="bp-modal-close" id="cover-modal-close">x</button>
-          <div class="bp-modal-eyebrow">Cover Image Prompt</div>
-          <h3 class="bp-modal-title">Gumawa ng Prompt para sa Cover ng Aklat</h3>
-          <p class="bp-p" style="font-size:13.5px;">Pumili ng estilo at kulay, i-edit ang mood/theme kung gusto, tapos i-generate. Ang result ay pwede mong i-copy-paste diretso sa Midjourney, DALL-E, Ideogram, o iba pang AI image generator.</p>
-
-          <div class="bp-cover-field">
-            <label>Cover Style</label>
-            <select id="cover-style">${styleOptions}</select>
-          </div>
-          <div class="bp-cover-field">
-            <label>Color Palette</label>
-            <select id="cover-palette">${paletteOptions}</select>
-          </div>
-          <div class="bp-cover-field">
-            <label>Mood / Theme (pwede mong baguhin)</label>
-            <textarea id="cover-mood" rows="3">${esc(cov.mood)}</textarea>
-            <div class="bp-cover-hint">Suggestion base sa iyong blueprint: audience, problema, at solusyon.</div>
-          </div>
-
-          <div class="bp-btn-row" style="margin-top:6px;">
-            <button class="bp-btn" id="btn-generate-cover" ${cov.loading?'disabled':''}>Buuin ang Cover Prompt <span class="bp-arrow">-></span></button>
-          </div>
-
-          <div id="cover-prompts-wrap" style="margin-top:20px;">${promptsHtml}</div>
-        </div>
-      </div>
-    `;
-
-    document.getElementById('cover-modal-close').addEventListener('click', closeChapterModal);
-    document.getElementById('cover-modal-backdrop').addEventListener('click', (e)=>{
-      if(e.target.id === 'cover-modal-backdrop') closeChapterModal();
-    });
-    document.getElementById('cover-style').addEventListener('change', e=>{ state.cover.style = e.target.value; });
-    document.getElementById('cover-palette').addEventListener('change', e=>{ state.cover.palette = e.target.value; });
-    document.getElementById('cover-mood').addEventListener('input', e=>{ state.cover.mood = e.target.value; });
-    document.getElementById('btn-generate-cover').addEventListener('click', onGenerateCoverPrompt);
-
-    if(cov.prompts && !cov.loading && !cov.error){
-      modalRoot.querySelectorAll('.bp-copy-icon-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const i = parseInt(btn.dataset.pidx,10);
-          navigator.clipboard.writeText(cov.prompts[i].prompt).then(()=>{
-            const old = btn.innerHTML;
-            btn.innerHTML = copyIconSvg + ' Nakopya [OK]';
-            setTimeout(()=>{ btn.innerHTML = old; }, 1600);
+        body.innerHTML = `<div class="bp-error">[!] ${esc(err.message || String(err))}</div>`;
+        const row = document.querySelector('.bp-modal-btnrow');
+        if(row){
+          row.innerHTML = `<button class="bp-btn" id="modal-retry" type="button">Subukan Muli</button>`;
+          document.getElementById('modal-retry').addEventListener('click', ()=>{
+            body.innerHTML = loadingHtml('Sinusulat ang buong chapter...');
+            row.innerHTML = '';
+            generateFullChapter(idx);
           });
-        });
-      });
-    }
-  }
-
-  async function onGenerateCoverPrompt(){
-    const prob = state.problemsList[state.chosenProblemIdx];
-    const concept = state.conceptsList[state.chosenConceptIdx];
-    const cov = state.cover;
-    cov.loading = true; cov.error = null; cov.prompts = null;
-    renderCoverModal();
-
-    const prompt = `You are an expert AI image-generation prompt writer. Write ready-to-use cover art prompts (in ENGLISH, since image generators like Midjourney/DALL-E/Ideogram respond best in English) for the cover of a self-help e-book.
-
-Book concept: "${concept.title}" - ${concept.description}
-Target audience: ${state.sino}
-Core problem it solves: ${prob.title} - ${prob.description}
-Requested visual style: ${cov.style}
-Requested color palette: ${cov.palette}
-Mood/theme notes: ${cov.mood}
-
-Return ONLY a JSON object, no markdown, no commentary, shaped like:
-{"prompts":[{"label":"short label for this variation, max 6 words","prompt":"the full detailed image-generation prompt in English, single paragraph, 40-80 words, describing subject, composition, style, lighting, color palette, and mood, written the way a professional prompt engineer would write it for Midjourney/DALL-E"}]}
-
-Return exactly 3 items: one that closely matches the requested style, and two alternate creative variations that still fit the book's theme and audience.`;
-
-    try{
-      const text = await callClaudeRaw(prompt, 4000, true);
-      const clean = text.replace(/```json|```/g, "").trim();
-      const data = JSON.parse(clean);
-      cov.prompts = (data.prompts || []).slice(0,3);
-      cov.loading = false;
-      renderCoverModal();
-    }catch(err){
-      cov.loading = false;
-      cov.error = friendlyErrorMsg(err);
-      renderCoverModal();
+        }
+      }
     }
   }
 
@@ -1110,3 +975,5 @@ Return exactly 3 items: one that closely matches the requested style, and two al
   render();
 })();
 </script>
+</body>
+</html>
