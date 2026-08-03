@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<style>html{visibility:hidden;}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth-guard.js"></script>
 <title>Ebook Blueprint Generator</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
@@ -327,6 +331,8 @@ html,body{margin:0;padding:0;min-height:100%;background:var(--bg);}
 </style>
 </head>
 <body>
+
+<button onclick="logout()" style="position:fixed;top:16px;right:20px;z-index:50;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:transparent;color:#B7C6D9;border:1px solid rgba(111,195,214,0.3);border-radius:2px;padding:8px 14px;cursor:pointer;">Logout</button>
 
 <div class="bp-root">
   <div class="bp-wrap">
